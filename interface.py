@@ -16,19 +16,21 @@ class application:
         self.widget1["pady"] = 10    
         self.widget1.pack(fill=X)
 
-        self.widget2 = Frame(master, width=500)   #frame entradas
+        self.widget2 = Frame(master, width=450, height=800, bg="#1e3743")   #frame entradas
         self.widget2["padx"] = 10
+        self.widget2["pady"] = 10
         self.widget2.columnconfigure(0, weight=1)
         self.widget2.pack_propagate(0)       
-        self.widget2.pack(side=LEFT, fill=Y)
+        self.widget2.pack(side=LEFT)
 
         self.widget3 = Frame(master)   #frame visual
         self.widget3["padx"] = 20   
         self.widget3["pady"] = 20
         self.widget3.pack()
 
-        self.widget4 = Frame(self.widget2)       #frame titulo parte superior
-        self.widget4.pack(side=TOP)
+        self.widget4 = Frame(self.widget2)       #frame entrada parte superior
+        self.widget4["pady"] = 40
+        self.widget4.pack(anchor=NW, expand=TRUE, fill=BOTH)
 
         #---------------------------------------------------TEXTOS-----------------------------------------------------------#
 
@@ -36,9 +38,9 @@ class application:
         self.titulo["font"] = ("Arial", "12", "bold")
         self.titulo.pack()
 
-        self.resultado = Label(self.widget2)
+        self.resultado = Label(self.widget4)
         self.resultado["font"] = ("Arial", "10", "bold")
-        self.resultado.pack(side=BOTTOM)
+        self.resultado.grid(row=7, column=1, columnspan=2)
 
         #---------------------------------------------------ENTRADAS-----------------------------------------------------------#
 
@@ -101,13 +103,13 @@ class application:
         self.contar["command"] = self.Calcular #atrela botão a função
         self.contar.grid(row=4, column=1, columnspan=2)
 
-        self.sair = Button(self.widget2)
+        self.sair = Button(self.widget4)
         self.sair["text"] = "Sair"
         self.sair["font"] = ("Arial", "12")
         self.sair["fg"] = ("Red")
         self.sair["width"] = 5
-        self.sair["command"] = self.widget2.quit  #atribuição de uma função "quit" para o botão
-        self.sair.pack(side=BOTTOM)
+        self.sair["command"] = self.widget4.quit  #atribuição de uma função "quit" para o botão
+        self.sair.grid(sticky=S, column=1, columnspan=2)
 
         self.add = Button(self.widget4)
         self.add["text"] = "Adicionar"
