@@ -106,5 +106,9 @@ retangulos = [
     Retangulo(4, 3, -2, 4)
 ]
 
+retangulinho = Retangulo(1, 2, 3, -3)
+
 
 print(analisar(retangulos)) 
+
+print(analisar([retangulinho]))
