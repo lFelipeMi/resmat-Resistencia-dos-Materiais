@@ -23,6 +23,7 @@ def analisar(lista_retangulos):
     posicao = -1
     for retangulo in lista_retangulos:
         posicao_atual = analisar_forma(retangulo.base, retangulo.altura, retangulo.cx, retangulo.cy)
+        print(f'Posicao: {posicao_atual}')
         posicao = posicao_atual if posicao == -1 else posicao
         if(posicao_atual == centro):
             return centro
@@ -31,15 +32,19 @@ def analisar(lista_retangulos):
                 return centro
             if(posicao_atual != posicao and (posicao + posicao_atual == 7 or posicao + posicao_atual == 11 or posicao + posicao_atual == 9 or posicao + posicao_atual == 13)):
                 return centro
-        if(posicao_atual != posicao and posicao in meios and (posicao + posicao_atual == 7 or posicao + posicao_atual == 11 or posicao + posicao_atual == 9 or posicao + posicao_atual == 13)):
+            if(posicao_atual % 2 == 0):
+                posicao = posicao_atual
+        elif(posicao_atual != posicao and posicao in meios and (posicao + posicao_atual == 7 or posicao + posicao_atual == 11 or posicao + posicao_atual == 9 or posicao + posicao_atual == 13)):
             return centro
-        if(posicao_atual != posicao):
+        elif(posicao_atual != posicao):
+            print(posicao, posicao_atual)
             posicao = (posicao + posicao_atual) / 2
     
     return posicao
 
 
 def analisar_forma(base, altura, cx, cy):
+    print(f'Dados: b = {base}, h = {altura}, cx {cx}, cy {cy}')
     if(cx >= 0 and cy >= 0): 
         if(altura / 2 <= cy and base / 2 <= cx):
             return canto_Inferior_Esquerdo
@@ -98,8 +103,8 @@ class Retangulo:
 
 retangulos = [
     Retangulo(2, 5, 1, 3),
-    Retangulo(4, 3, -1, 4)
+    Retangulo(4, 3, -2, 4)
 ]
 
 
-print(analisar(retangulos)) #naooooo foiii aaaaa
+print(analisar(retangulos)) 
