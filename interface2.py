@@ -56,7 +56,14 @@ class Application:
         self.CY.grid(row=2, column=1, padx=3, pady=5)
 
         self.definirBtn = Button(self.origemFrame, text="Definir Origem", font=("Arial", "12"), command=self.DefinirOrigem)
-        self.definirBtn.grid(row=3, column=2, padx=3, pady=5)
+        self.definirBtn.grid(row=3, column=1, padx=3, pady=5)
+
+    # ---------------- Unidade de medida ----------------  
+        self.unidadeLabel = Label(self.origemFrame, text="Unidade:", font=("Arial", "12"), bg="#cccccc")
+        self.unidadeLabel.grid(row=1, column=2)
+        self.opcao = StringVar()
+        self.unidade = OptionMenu(self.origemFrame, self.opcao, "Metros", "Centímetros", "Milímetros")
+        self.unidade.grid(row=1, column=3, columnspan=2)
 
     # ---------------- Subáreas ----------------
         self.subareaMsg = Label(self.subpainel, text="Adicione ou remova uma subárea da área final:", font=("Arial", 12), bg="#cccccc", fg="black")
@@ -180,13 +187,23 @@ class Application:
             self.retangulos.adicionar_forma(Retangulo(base, -1 * altura, cx, cy))
             self.canvas.draw()
     
-    def Calcular(self):        
+    def Calcular(self):
+
+        unidade = self.opcao.get()
+
+        match unidade:
+            case 'Centímetros':
+                unidade = "cm⁴"
+            case 'Milímetros':
+                unidade = "mm⁴"
+            case 'Metros':
+                unidade = "m⁴"        
 
         self.resultado["text"] = (
-            f"Ix = {self.retangulos.momento_em('x'):.2f}m^4\n"
-            f"Iy = {self.retangulos.momento_em('y'):.2f}m^4\n"
-            f"Jo = {self.retangulos.momento_total():.2f}\n"
-            f"Produto de Inércia = Resultado")
+            f"Ix = {self.retangulos.momento_em('x'):.2f} {unidade}\n"
+            f"Iy = {self.retangulos.momento_em('y'):.2f} {unidade}\n"
+            f"Jo = {self.retangulos.momento_total():.2f} {unidade}\n"
+            f"Produto de Inércia = Resultado {unidade}")
 
 
 Application(root)
