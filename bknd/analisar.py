@@ -1,3 +1,6 @@
+from .forma_geometrica import FormaGeometrica
+from .retangulo import Retangulo
+
 canto_Superior_Esquerdo = 1
 canto_Superior_Medio = 2
 canto_Superior_Direito = 3
@@ -94,12 +97,6 @@ def analisar_forma(base, altura, cx, cy):
         
 
 # teste
-class Retangulo:
-    def __init__(self, base, altura, cx, cy):
-        self.base = base
-        self.altura = altura
-        self.cx = cx
-        self.cy = cy
 
 retangulos = [
     Retangulo(2, 5, 1, 3),
