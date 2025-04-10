@@ -9,11 +9,6 @@ class Retangulo(FormaGeometrica):
         self.altura = altura
         self.area = self.base * self.altura
 
-    def momento_total(self, lista_formas):
-        Itotal = 0
-        for forma in lista_formas:
-            Itotal += self.momento(forma)
-
     def momento(self, forma:'Retangulo'):
         return forma.momento_em('x') + forma.momento_em('y')
     

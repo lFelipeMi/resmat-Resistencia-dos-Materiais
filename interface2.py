@@ -5,7 +5,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.patches as patches
 import numpy as np
 
-from bknd import  FormaGeometrica, Retangulo, analisar, analisar_forma
+from bknd import  FormaGeometrica, Retangulo, Figura, analisar, analisar_forma
 
 
 root = Tk()
@@ -16,7 +16,7 @@ class Application:
         root.attributes('-fullscreen', True)
         root.configure(background='#1e3743')
 
-        self.retangulos = []
+        self.retangulos = Figura()
 
     # ---------------- Título ----------------
         self.topoFrame = Frame(master, pady=10)
@@ -156,7 +156,7 @@ class Application:
 
         if self.ax:
             retangulo = patches.Rectangle((canto_x, canto_y), base, altura, linewidth=2, edgecolor='lightblue', facecolor='lightblue')
-            self.retangulos.append(Retangulo(base, altura, cx, cy))
+            self.retangulos.adicionar_forma(Retangulo(base, altura, cx, cy))
             self.ax.add_patch(retangulo)
             self.canvas.draw()
 
@@ -177,20 +177,15 @@ class Application:
         if self.ax:
             remover = patches.Rectangle((canto_x, canto_y), base, altura, linewidth=1, edgecolor='gray', facecolor='lightgray', hatch='////', alpha=0.7)
             self.ax.add_patch(remover)
-            self.retangulos.append(Retangulo(base, altura, cx, cy))
-            self.retangulos[-1].area *= 1
+            self.retangulos.adicionar_forma(Retangulo(base, -1 * altura, cx, cy))
             self.canvas.draw()
     
-    def Calcular(self):
-        area_total = 0
-        for forma in self.retangulos:
-            area_total += forma.area
-        
+    def Calcular(self):        
 
         self.resultado["text"] = (
-            f"Ix = {self.retangulos[0].momento_em('x')}m^4\n"
-            f"Iy = {self.retangulos[0].momento_em('y')}m^4\n"
-            f"Jo = {self.retangulos[0].momento_total(self.retangulos)}\n"
+            f"Ix = {self.retangulos.momento_em('x'):.2f}m^4\n"
+            f"Iy = {self.retangulos.momento_em('y'):.2f}m^4\n"
+            f"Jo = {self.retangulos.momento_total():.2f}\n"
             f"Produto de Inércia = Resultado")
 
 
