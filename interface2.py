@@ -63,6 +63,7 @@ class Application:
         self.unidadeLabel.grid(row=1, column=2)
         self.opcao = StringVar()
         self.unidade = OptionMenu(self.origemFrame, self.opcao, "Metros", "Centímetros", "Milímetros")
+        self.unidade.config(width=10)
         self.unidade.grid(row=1, column=3, columnspan=2)
 
     # ---------------- Subáreas ----------------
