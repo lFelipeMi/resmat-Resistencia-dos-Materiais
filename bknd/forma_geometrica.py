@@ -15,6 +15,7 @@ class FormaGeometrica():
 
         return [self.centroide_figura_em(formas, 'x', area_total), self.centroide_figura_em(formas, 'y', area_total)]
 
+
     # uma lista de formas geométricas  
     def centroide_figura_em(formas, eixo, area_total):
         somatorio_Distancia_Area = 0
