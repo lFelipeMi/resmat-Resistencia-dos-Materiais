@@ -29,10 +29,11 @@ class Figura():
 
     def verificar_sobreposicoes(self):
         i = 0
-        while(i < len.self.formas - 1):
+        tam = len(self.formas)
+        while(i < tam - 1):
 
             j = i + 1
-            while(j < len.self.formas):
+            while(j < tam):
                 self.verificar_sobreposicao(self.formas[i], self.formas[j])
                 j += 1
         
@@ -44,7 +45,7 @@ class Figura():
         cx2max, cx2min = retangulo2.cx + retangulo2.base/2, retangulo2.cx - retangulo2.base/2
         cy2max, cy2min = retangulo2.cy + retangulo2.altura/2, retangulo2.cy - retangulo2.altura/2
 
-        cyCorrecao, cxCorrecao = 0
+        cyCorrecao, cxCorrecao = 0, 0
 
         base_sobreposta = 0
 
@@ -53,8 +54,8 @@ class Figura():
             cxCorrecao = retangulo1.cx
 
         if(cx1max >= cx2max and cx1min <= cx2min):
-            base_sobreposta = self.retangulo2.base
-            cxCorrecao = self.retangulo2.cx
+            base_sobreposta = retangulo2.base
+            cxCorrecao = retangulo2.cx
 
         if(cx1max > cx2max and cx1min >= cx2min):
             base_sobreposta = cx2max - cx1min
@@ -67,20 +68,23 @@ class Figura():
         altura_sobreposta = 0
 
         if(cy1max <= cy2max and cy1min >= cy2min):
-            base_sobreposta = retangulo1.altura
+            altura_sobreposta = retangulo1.altura
             cyCorrecao = retangulo1.cy
 
         if(cy1max >= cy2max and cy1min <= cy2min):
-            base_sobreposta = self.retangulo2.altura
-            cyCorrecao = self.retangulo2.cy
+            altura_sobreposta = retangulo2.altura
+            cyCorrecao = retangulo2.cy
 
         if(cy1max > cy2max and cy1min >= cy2min):
-            base_sobreposta = cy2max - cy1min
+            altura_sobreposta = cy2max - cy1min
             cyCorrecao = cy1min + altura_sobreposta / 2
 
         if(cy1max < cy2max and cy1min <= cy2min):
-            base_sobreposta = cy1max - cy2min
+            altura_sobreposta = cy1max - cy2min
             cyCorrecao = cy2min + altura_sobreposta / 2
         
+
+        print(f'Base sopreposta: {base_sobreposta}\nAltura sobreposta: {altura_sobreposta}')
         if(base_sobreposta * altura_sobreposta != 0):
-            self.adicionar_forma(Retangulo(base_sobreposta, altura_sobreposta * 1, cxCorrecao, cyCorrecao))
+            print('Houve uma sobreposição')
+            self.adicionar_forma(Retangulo(base_sobreposta, altura_sobreposta * -1, cxCorrecao, cyCorrecao))

@@ -200,6 +200,8 @@ class Application:
             case 'Metros':
                 unidade = "m⁴"        
 
+        self.retangulos.verificar_sobreposicoes()
+
         self.resultado["text"] = (
             f"Ix = {self.retangulos.momento_em('x'):.2f} {unidade}\n"
             f"Iy = {self.retangulos.momento_em('y'):.2f} {unidade}\n"
