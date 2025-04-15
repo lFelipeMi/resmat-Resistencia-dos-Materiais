@@ -250,9 +250,14 @@ class Application:
         self.figuraADD = Figura(self.retangulosADD)
         self.figuraREM = Figura(self.retangulosREM)
 
-        self.momento_x = self.figuraADD.momento_inercia('x', self.x_origem) - self.figuraREM.momento_inercia('x', self.x_origem)
-        self.momento_y = self.figuraADD.momento_inercia('y', self.y_origem) - self.figuraREM.momento_inercia('y', self.y_origem)
-        self.momento_o = self.momento_x + self.momento_y #nem precisou da funcao
+        self.intersecao = self.figuraADD.naoSeiDoQueChamar.intersection(self.figuraREM.naoSeiDoQueChamar)
+
+        self.intersecao_figura = Figura([])
+        self.intersecao_figura.naoSeiDoQueChamar = self.intersecao
+
+        self.momento_x = self.figuraADD.momento_inercia('x', self.x_origem) - self.intersecao_figura.momento_inercia('x', self.x_origem)
+        self.momento_y = self.figuraADD.momento_inercia('y', self.y_origem) - self.intersecao_figura.momento_inercia('y', self.y_origem)
+        self.momento_o = self.momento_x + self.momento_y #nem precisou da funcao vapo vapo
 
         self.resultado["text"] = (
             f"Ix = {self.momento_x:.2f} {unidade}\n"

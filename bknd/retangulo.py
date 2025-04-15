@@ -16,12 +16,19 @@ class Figura():
     
     @naoSeiDoQueChamar.setter
     def naoSeiDoQueChamar(self, retangulos):
-        formas_da_figura = [criar_retangulo(b, h, cx, cy) for (b, h, cx, cy) in retangulos]
-        self.__naoSeiDoQueChamar = unary_union(formas_da_figura)
+        if isinstance(retangulos, Polygon):
+            self.__naoSeiDoQueChamar = retangulos
+        else:
+            formas_da_figura = [criar_retangulo(b, h, cx, cy) for (b, h, cx, cy) in retangulos]
+            self.__naoSeiDoQueChamar = unary_union(formas_da_figura)
+
+    @property
+    def area(self):
+        return self.naoSeiDoQueChamar.area if self.naoSeiDoQueChamar else 0
 
     def momento_inercia(self, eixo='x', eixo_coordenada=0.0):
         if not isinstance(self.naoSeiDoQueChamar, Polygon):
-            momentos = [self.momento_inercia(p, eixo, eixo_coordenada) for p in self.naoSeiDoQueChamar.geoms]
+            momentos = [p.momento_inercia(eixo, eixo_coordenada) for p in self.naoSeiDoQueChamar.geoms]
             return sum(momentos)
 
         x, y = self.naoSeiDoQueChamar.exterior.coords.xy
