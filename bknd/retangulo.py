@@ -1,6 +1,7 @@
 from shapely.geometry import box
 from shapely.ops import unary_union
 from shapely.geometry import Polygon
+from shapely.geometry import BaseGeometry
 import numpy as np
 
 def criar_retangulo(b, h, cx, cy):
@@ -16,7 +17,7 @@ class Figura():
     
     @naoSeiDoQueChamar.setter
     def naoSeiDoQueChamar(self, retangulos):
-        if isinstance(retangulos, Polygon):
+        if isinstance(retangulos, BaseGeometry):
             self.__naoSeiDoQueChamar = retangulos
         else:
             formas_da_figura = [criar_retangulo(b, h, cx, cy) for (b, h, cx, cy) in retangulos]
