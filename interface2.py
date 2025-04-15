@@ -6,7 +6,7 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 
-from bknd import  FormaGeometrica, Retangulo, Figura, analisar, analisar_forma
+from bknd import criar_retangulo, Figura #, analisar, analisar_forma
 
 root = Tk()
 
@@ -16,7 +16,8 @@ class Application:
         root.attributes('-fullscreen', True)
         root.configure(background='#1e3743')
 
-        self.retangulos = Figura()
+        self.retangulosADD = []
+        self.retangulosREM = []
 
     # ---------------- Título ----------------
         self.topoFrame = Frame(master, pady=10)
@@ -170,7 +171,7 @@ class Application:
 
         if self.ax:
             retangulo = patches.Rectangle((canto_x, canto_y), base, altura, linewidth=2, edgecolor='lightblue', facecolor='lightblue')
-            self.retangulos.adicionar_forma(Retangulo(base, altura, cx, cy))
+            self.retangulosADD.append((base, altura, cx, cy))
             self.ax.add_patch(retangulo)
             self.canvas.draw()
         
@@ -196,7 +197,7 @@ class Application:
         if self.ax:
             remover = patches.Rectangle((canto_x, canto_y), base, altura, linewidth=1, edgecolor='gray', facecolor='lightgray', hatch='////', alpha=0.7)
             self.ax.add_patch(remover)
-            self.retangulos.adicionar_forma(Retangulo(base, -1 * altura, cx, cy))
+            self.retangulosREM.append((base, altura, cx, cy))
             self.canvas.draw()
 
         self.X.delete(0, END)
@@ -246,12 +247,17 @@ class Application:
             case 'Metros':
                 unidade = "m⁴"        
 
-        self.retangulos.verificar_sobreposicoes()
+        self.figuraADD = Figura(self.retangulosADD)
+        self.figuraREM = Figura(self.retangulosREM)
+
+        self.momento_x = self.figuraADD.momento_inercia('x', self.x_origem) - self.figuraREM.momento_inercia('x', self.x_origem)
+        self.momento_y = self.figuraADD.momento_inercia('y', self.y_origem) - self.figuraREM.momento_inercia('y', self.y_origem)
+        self.momento_o = self.momento_x + self.momento_y #nem precisou da funcao
 
         self.resultado["text"] = (
-            f"Ix = {self.retangulos.momento_em('x'):.2f} {unidade}\n"
-            f"Iy = {self.retangulos.momento_em('y'):.2f} {unidade}\n"
-            f"Jo = {self.retangulos.momento_total():.2f} {unidade}\n"
+            f"Ix = {self.momento_x:.2f} {unidade}\n"
+            f"Iy = {self.momento_y:.2f} {unidade}\n"
+            f"Jo = {self.momento_o:.2f} {unidade}\n"
             f"Produto de Inércia = Resultado {unidade}")
 
 
