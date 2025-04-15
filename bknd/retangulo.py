@@ -1,7 +1,7 @@
 from shapely.geometry import box
 from shapely.ops import unary_union
 from shapely.geometry import Polygon
-from shapely.geometry import BaseGeometry
+from shapely.geometry.base import BaseGeometry
 import numpy as np
 
 def criar_retangulo(b, h, cx, cy):
