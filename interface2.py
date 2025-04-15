@@ -171,6 +171,7 @@ class Application:
 
         if self.ax:
             retangulo = patches.Rectangle((canto_x, canto_y), base, altura, linewidth=2, edgecolor='lightblue', facecolor='lightblue')
+            self.AjustarPlano(base, altura, cx, cy)
             self.retangulosADD.append((base, altura, cx, cy))
             self.ax.add_patch(retangulo)
             self.canvas.draw()
@@ -259,6 +260,17 @@ class Application:
         self.retangulosADD.clear()
         self.retangulosREM.clear()
         self.resultado["text"] = ""
+
+    def AjustarPlano(self, base, altura, cx, cy):
+        ticks = int((base + altura)/10)
+
+        if base >= 100 or altura >= 100:
+            self.ax.set_xlim(self.x_origem - base, self.x_origem + base)
+            self.ax.set_ylim(self.y_origem - altura, self.y_origem + altura)
+
+            self.ax.set_xticks(np.arange(self.x_origem - base, self.x_origem + (base+1), ticks))
+            self.ax.set_yticks(np.arange(self.y_origem - base, self.y_origem + (base+1), ticks))
+
 
     def Calcular(self):
 
