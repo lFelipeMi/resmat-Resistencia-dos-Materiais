@@ -191,19 +191,43 @@ class Application:
             messagebox.showerror("Erro", "Por favor, preencha todos os campos corretamente.")
             return
 
-        canto_x = cx - base / 2
-        canto_y = cy - altura / 2
+        canto_x1 = cx - base / 2
+        canto_y1 = cy - altura / 2
+        canto_x2 = cx + base / 2
+        canto_y2 = cy + altura / 2
 
-        if self.ax:
-            remover = patches.Rectangle((canto_x, canto_y), base, altura, linewidth=1, edgecolor='gray', facecolor='lightgray', hatch='////', alpha=0.7)
-            self.ax.add_patch(remover)
-            self.retangulosREM.append((base, altura, cx, cy))
-            self.canvas.draw()
+        interseccao = False
+
+        for base_add, altura_add, cx_add, cy_add in self.retangulosADD:
+
+            add_x1 = cx_add - base_add / 2
+            add_y1 = cy_add - altura_add / 2
+            add_x2 = cx_add + base_add / 2
+            add_y2 = cy_add + altura_add / 2
+
+            inter_x1 = max(canto_x1, add_x1)
+            inter_y1 = max(canto_y1, add_y1)
+            inter_x2 = min(canto_x2, add_x2)
+            inter_y2 = min(canto_y2, add_y2)
+
+            if inter_x2 > inter_x1 and inter_y2 > inter_y1:
+                interseccao = True
+                largura_inter = inter_x2 - inter_x1
+                altura_inter = inter_y2 - inter_y1
+
+                remocao = patches.Rectangle((inter_x1, inter_y1), largura_inter, altura_inter, linewidth=1, edgecolor='gray', facecolor='lightgray', hatch='////', alpha=0.7)
+                self.ax.add_patch(remocao)
+                self.retangulosREM.append((largura_inter, altura_inter, inter_x1 + largura_inter/2, inter_y1 + altura_inter/2))
 
         self.X.delete(0, END)
         self.Y.delete(0, END)
         self.base.delete(0, END)
         self.altura.delete(0, END)
+
+        if not interseccao:
+            return
+        else:
+            self.canvas.draw()
     
     def LimparPlano(self):
         if self.ax:
@@ -232,7 +256,8 @@ class Application:
 
         self.canvas.draw()
 
-        self.retangulos.formas.clear()
+        self.retangulosADD.clear()
+        self.retangulosREM.clear()
         self.resultado["text"] = ""
 
     def Calcular(self):
