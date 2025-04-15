@@ -1,13 +1,13 @@
 from .forma_geometrica import FormaGeometrica
+from shapely.geometry import box
+from shapely.ops import unary_union
+from shapely.geometry import Polygon
+import numpy as np
 
 class Retangulo(FormaGeometrica):
     def __init__(self, base, altura, cx, cy):
         #centroide é uma lista [x, y]
-        self.cx = cx
-        self.cy = cy
-        self.base = base
-        self.altura = altura
-        self.area = self.base * self.altura
+        self.retangulo = box(cx - base/2, cy - altura/2, cx + base/2, cy + altura/2)
 
     def momento(self, forma:'Retangulo'):
         return forma.momento_em('x') + forma.momento_em('y')

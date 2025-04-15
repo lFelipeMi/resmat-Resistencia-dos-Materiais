@@ -1,3 +1,6 @@
+'''
+No youtube tinha um jeito bem mais facil aaaaaaaaaaa
+
 from .forma_geometrica import FormaGeometrica
 from .retangulo import Retangulo 
 
@@ -40,6 +43,7 @@ class Figura():
             i += 1
     
     def verificar_sobreposicao(self, retangulo1, retangulo2):
+        tava funcionando mas só pra ser utilizada uma vez.
         cx1max, cx1min = retangulo1.cx + retangulo1.base/2, retangulo1.cx - retangulo1.base/2
         cy1max, cy1min = retangulo1.cy + retangulo1.altura/2, retangulo1.cy - retangulo1.altura/2
         cx2max, cx2min = retangulo2.cx + retangulo2.base/2, retangulo2.cx - retangulo2.base/2
@@ -88,3 +92,4 @@ class Figura():
         if(base_sobreposta * altura_sobreposta != 0):
             print('Houve uma sobreposição')
             self.adicionar_forma(Retangulo(base_sobreposta, altura_sobreposta * -1, cxCorrecao, cyCorrecao))
+    '''
