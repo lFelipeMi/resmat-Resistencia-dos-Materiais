@@ -3,10 +3,10 @@ from tkinter import messagebox
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.patches as patches
+import matplotlib.pyplot as plt
 import numpy as np
 
 from bknd import  FormaGeometrica, Retangulo, Figura, analisar, analisar_forma
-
 
 root = Tk()
 
@@ -66,16 +66,20 @@ class Application:
         self.unidade.config(width=10)
         self.unidade.grid(row=1, column=3, columnspan=2)
 
+    # ---------------- Limpar plano ----------------  
+        self.limparPlano = Button(self.subpainel, text="Limpar plano", font=("Arial", "12"), fg=("red"), command=self.LimparPlano)
+        self.limparPlano.grid(row=7, column=0, pady=10)
+
     # ---------------- Subáreas ----------------
         self.subareaMsg = Label(self.subpainel, text="Adicione ou remova uma subárea da área final:", font=("Arial", 12), bg="#cccccc", fg="black")
         self.subareaMsg.grid(row=2, column=0, columnspan=4, padx=(5,0), pady=(0, 10), sticky="w")
 
-        self.baseLabel = Label(self.subpainel, text="Base (m):", font=("Arial", "12"), bg="#cccccc", fg="black")
+        self.baseLabel = Label(self.subpainel, text="Base:", font=("Arial", "12"), bg="#cccccc", fg="black")
         self.baseLabel.grid(row=3, column=0)
         self.base = Entry(self.subpainel, width=10, font=("Arial", "12"))
         self.base.grid(row=3, column=1, padx=5, pady=10)
 
-        self.alturaLabel = Label(self.subpainel, text="Altura (m):", font=("Arial", "12"), bg="#cccccc", fg="black")
+        self.alturaLabel = Label(self.subpainel, text="Altura:", font=("Arial", "12"), bg="#cccccc", fg="black")
         self.alturaLabel.grid(row=4, column=0)
         self.altura = Entry(self.subpainel, width=10, font=("Arial", "12"))
         self.altura.grid(row=4, column=1, padx=5, pady=10)
@@ -130,11 +134,11 @@ class Application:
 
         self.ax.clear()
 
-        self.ax.set_xlim(self.x_origem - 30, self.x_origem + 30)
-        self.ax.set_ylim(self.y_origem - 30, self.y_origem + 30)
+        self.ax.set_xlim(self.x_origem - 50, self.x_origem + 50)
+        self.ax.set_ylim(self.y_origem - 50, self.y_origem + 50)
 
-        self.ax.set_xticks(np.arange(self.x_origem - 30, self.x_origem + 31, 5))
-        self.ax.set_yticks(np.arange(self.y_origem - 30, self.y_origem + 31, 5))
+        self.ax.set_xticks(np.arange(self.x_origem - 50, self.x_origem + 51, 5))
+        self.ax.set_yticks(np.arange(self.y_origem - 50, self.y_origem + 51, 5))
 
         self.ax.grid(True)
 
@@ -155,6 +159,8 @@ class Application:
             altura = float(self.altura.get())
             cx = float(self.X.get())
             cy = float(self.Y.get())
+            x_origem = float(self.CX.get())
+            y_origem = float(self.CY.get())
         except ValueError:
             messagebox.showerror("Erro", "Por favor, preencha todos os campos corretamente.")
             return
@@ -167,6 +173,11 @@ class Application:
             self.retangulos.adicionar_forma(Retangulo(base, altura, cx, cy))
             self.ax.add_patch(retangulo)
             self.canvas.draw()
+        
+        self.X.delete(0, END)
+        self.Y.delete(0, END)
+        self.base.delete(0, END)
+        self.altura.delete(0, END) #isso limpa a entry após apertar o botão
 
     # ---------------- Removendo subáreas ----------------
     def Remover(self):
@@ -187,7 +198,42 @@ class Application:
             self.ax.add_patch(remover)
             self.retangulos.adicionar_forma(Retangulo(base, -1 * altura, cx, cy))
             self.canvas.draw()
+
+        self.X.delete(0, END)
+        self.Y.delete(0, END)
+        self.base.delete(0, END)
+        self.altura.delete(0, END)
     
+    def LimparPlano(self):
+        if self.ax:
+
+            self.ax.clear()
+
+            try:
+                x_origem = float(self.CX.get())
+                y_origem = float(self.CY.get())
+            except ValueError:
+                messagebox.showerror("Erro", "Por favor, defina a origem corretamente antes de limpar.")
+                return
+
+        self.ax.set_xlim(x_origem - 50, x_origem + 50)
+        self.ax.set_ylim(y_origem - 50, y_origem + 50)
+
+        self.ax.set_xticks(np.arange(x_origem - 50, x_origem + 51, 5))
+        self.ax.set_yticks(np.arange(y_origem - 50, y_origem + 51, 5))
+
+        self.ax.grid(True)
+        self.ax.axhline(y=y_origem, color='black', linewidth=1)
+        self.ax.axvline(x=x_origem, color='black', linewidth=1)
+        self.ax.set_xlabel("Eixo X")
+        self.ax.set_ylabel("Eixo Y")
+        self.ax.plot(x_origem, y_origem, marker='o', color='black', markersize=10, label='Origem')
+
+        self.canvas.draw()
+
+        self.retangulos.formas.clear()
+        self.resultado["text"] = ""
+
     def Calcular(self):
 
         unidade = self.opcao.get()
