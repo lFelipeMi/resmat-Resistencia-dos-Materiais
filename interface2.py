@@ -3,7 +3,6 @@ from tkinter import messagebox
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.patches as patches
-import matplotlib.pyplot as plt
 import numpy as np
 
 from bknd import criar_retangulo, Figura #, analisar, analisar_forma
@@ -160,8 +159,6 @@ class Application:
             altura = float(self.altura.get())
             cx = float(self.X.get())
             cy = float(self.Y.get())
-            x_origem = float(self.CX.get())
-            y_origem = float(self.CY.get())
         except ValueError:
             messagebox.showerror("Erro", "Por favor, preencha todos os campos corretamente.")
             return
@@ -171,9 +168,9 @@ class Application:
 
         if self.ax:
             retangulo = patches.Rectangle((canto_x, canto_y), base, altura, linewidth=2, edgecolor='lightblue', facecolor='lightblue')
-            self.AjustarPlano(base, altura, cx, cy)
             self.retangulosADD.append((base, altura, cx, cy))
             self.ax.add_patch(retangulo)
+            self.AjustarPlano()
             self.canvas.draw()
         
         self.X.delete(0, END)
@@ -261,16 +258,24 @@ class Application:
         self.retangulosREM.clear()
         self.resultado["text"] = ""
 
-    def AjustarPlano(self, base, altura, cx, cy):
-        ticks = int((base + altura)/10)
+    def AjustarPlano(self):
 
-        if base >= 100 or altura >= 100:
-            self.ax.set_xlim(self.x_origem - base, self.x_origem + base)
-            self.ax.set_ylim(self.y_origem - altura, self.y_origem + altura)
+        maior = 0
+        for el in self.retangulosADD:
 
-            self.ax.set_xticks(np.arange(self.x_origem - base, self.x_origem + (base+1), ticks))
-            self.ax.set_yticks(np.arange(self.y_origem - base, self.y_origem + (base+1), ticks))
+            i = 0
+            while i < 2:
+                if el[i] > maior:
+                    maior = int(el[i])
+                i+=1
+            
+        ticks = maior*0.2
 
+        self.ax.set_xlim(self.x_origem - maior, self.x_origem + maior)
+        self.ax.set_ylim(self.y_origem - maior, self.y_origem + maior)
+
+        self.ax.set_xticks(np.arange(self.x_origem - maior, self.x_origem + (maior+1), ticks))
+        self.ax.set_yticks(np.arange(self.y_origem - maior, self.y_origem + (maior+1), ticks))
 
     def Calcular(self):
 
@@ -301,7 +306,6 @@ class Application:
             f"Iy = {self.momento_y:.2f} {unidade}\n"
             f"Jo = {self.momento_o:.2f} {unidade}\n"
             f"Produto de Inércia = Resultado {unidade}")
-
 
 Application(root)
 root.mainloop()
