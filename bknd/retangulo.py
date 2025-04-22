@@ -2,6 +2,7 @@ from shapely.geometry import box
 from shapely.ops import unary_union
 from shapely.geometry import Polygon
 from shapely.geometry.base import BaseGeometry
+from shapely.geometry import MultiPolygon
 import numpy as np
 
 from .geometria import Geometria

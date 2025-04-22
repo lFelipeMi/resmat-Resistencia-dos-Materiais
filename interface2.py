@@ -5,6 +5,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.patches as patches
 import numpy as np
 
+from shapely.geometry import Polygon
+from shapely.geometry import MultiPolygon
+
 from bknd import criar_retangulo, Figura #, analisar, analisar_forma
 
 root = Tk()
@@ -292,14 +295,35 @@ class Application:
         self.figuraADD = Figura(self.retangulosADD)
         self.figuraREM = Figura(self.retangulosREM)
 
-        self.intersecao = self.figuraADD.completa.intersection(self.figuraREM.completa)
+        if isinstance(self.figuraADD.completa, MultiPolygon):
+            # Divide os polígonos em partes
+            self.figurasADD = [Figura([(0, 0, 0, 0)]) for _ in self.figuraADD.completa.geoms]
+            for f, geom in zip(self.figurasADD, self.figuraADD.completa.geoms):
+                f.completa = geom
 
-        self.intersecao_figura = Figura([])
-        self.intersecao_figura.completa = self.intersecao
+            self.figurasREM = [Figura([(0, 0, 0, 0)]) for _ in self.figuraREM.completa.geoms]
+            for f, geom in zip(self.figurasREM, self.figuraREM.completa.geoms):
+                f.completa = geom
 
-        self.momento_x = self.figuraADD.momento_inercia('x', self.x_origem) - self.intersecao_figura.momento_inercia('x', self.x_origem)
-        self.momento_y = self.figuraADD.momento_inercia('y', self.y_origem) - self.intersecao_figura.momento_inercia('y', self.y_origem)
-        self.momento_o = self.momento_x + self.momento_y #nem precisou da funcao vapo vapo
+            # Cálculo de momentos
+            self.momento_xADD = sum(f.momento_inercia('x', self.x_origem) for f in self.figurasADD)
+            self.momento_xREM = sum(f.momento_inercia('x', self.x_origem) for f in self.figurasREM)
+            self.momento_x = self.momento_xADD - self.momento_xREM
+
+            self.momento_yADD = sum(f.momento_inercia('y', self.y_origem) for f in self.figurasADD)
+            self.momento_yREM = sum(f.momento_inercia('y', self.y_origem) for f in self.figurasREM)
+            self.momento_y = self.momento_yADD - self.momento_yREM
+        else:
+
+            self.intersecao = self.figuraADD.completa.intersection(self.figuraREM.completa)
+
+            self.intersecao_figura = Figura([])
+            self.intersecao_figura.completa = self.intersecao
+
+            self.momento_x = self.figuraADD.momento_inercia('x', self.x_origem) - self.intersecao_figura.momento_inercia('x', self.x_origem)
+            self.momento_y = self.figuraADD.momento_inercia('y', self.y_origem) - self.intersecao_figura.momento_inercia('y', self.y_origem)
+
+        self.momento_o = self.momento_x + self.momento_y 
 
         self.resultado["text"] = (
             f"Ix = {self.momento_x:.2f} {unidade}\n"
