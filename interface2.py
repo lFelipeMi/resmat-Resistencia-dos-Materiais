@@ -264,15 +264,20 @@ class Application:
     def AjustarPlano(self):
 
         maior = 0
-        for el in self.retangulosADD:
+        for el in self.retangulosADD:              #percorre a tupla maior
 
             i = 0
-            while i < 2:
-                if el[i] > maior:
-                    maior = int(el[i])
+            while i < 4:                           #percorre os elementos da tupla menor
+                if i < 2:                          #relacionados a base e altura
+                    if abs(el[i]) > maior:
+                        maior = int(el[i])
+                
+                else:
+                    if abs(el[i]) >= maior:        #relacionados a centroide
+                        maior = (int(el[i]) * 2)
                 i+=1
             
-        ticks = maior*0.2
+        ticks = abs(maior*0.2)
 
         self.ax.set_xlim(self.x_origem - maior, self.x_origem + maior)
         self.ax.set_ylim(self.y_origem - maior, self.y_origem + maior)
