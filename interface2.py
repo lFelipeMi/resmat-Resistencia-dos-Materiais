@@ -108,7 +108,7 @@ class Application:
         self.calc.grid(row=6, column=0, columnspan=4, padx=(45,0), pady=(5, 20))
 
         self.resultado = Label(self.subpainel2, font=("Arial", "12", "bold"),  bg="#cccccc", fg="black")
-        self.resultado.grid(row=10, column=2, padx=(20,0), pady=10, sticky=W)
+        self.resultado.grid(row=10, column=2, padx=10, sticky=W)
 
     # ---------------- Plano ----------------
         self.plano = Frame(master, bg="#1e3743")
