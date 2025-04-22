@@ -2,7 +2,7 @@ Autores:
 Leonardo Araujo Armelin, RA: 49577
 Cleiton, RA:
 Stefany, RA:
-Luiz, RA:
+Luiz Felipe Miranda, RA: 49581
 
 Línguagem:
 Python 3.12.3
