@@ -292,10 +292,10 @@ class Application:
         self.figuraADD = Figura(self.retangulosADD)
         self.figuraREM = Figura(self.retangulosREM)
 
-        self.intersecao = self.figuraADD.naoSeiDoQueChamar.intersection(self.figuraREM.naoSeiDoQueChamar)
+        self.intersecao = self.figuraADD.completa.intersection(self.figuraREM.completa)
 
         self.intersecao_figura = Figura([])
-        self.intersecao_figura.naoSeiDoQueChamar = self.intersecao
+        self.intersecao_figura.completa = self.intersecao
 
         self.momento_x = self.figuraADD.momento_inercia('x', self.x_origem) - self.intersecao_figura.momento_inercia('x', self.x_origem)
         self.momento_y = self.figuraADD.momento_inercia('y', self.y_origem) - self.intersecao_figura.momento_inercia('y', self.y_origem)
