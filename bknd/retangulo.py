@@ -58,11 +58,11 @@ class Figura():
         for i in range(len(x) - 1):
             xi, yi = x[i], y[i]
             xi1, yi1 = x[i+1], y[i+1]
-            common = xi * yi1 - xi1 * yi
+            det = xi * yi1 - xi1 * yi 
             if eixo == 'x':
-                I += (yi**2 + yi*yi1 + yi1**2) * common
+                I += (yi**2 + yi*yi1 + yi1**2) * det
             elif eixo == 'y':
-                I += (xi**2 + xi*xi1 + xi1**2) * common
+                I += (xi**2 + xi*xi1 + xi1**2) * det
         I *= 1/12
         I = abs(I)
         #print(I)
@@ -77,7 +77,7 @@ class Figura():
         #print(A * d**2)
         I += A * d**2
         '''
-        
+
         return I
     
     def momento_polar(self, eixo_coordenada=0.0):
