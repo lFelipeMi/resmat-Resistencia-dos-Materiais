@@ -88,4 +88,6 @@ class Figura():
         dy = eixo_coordenada_y - c.y
 
         Ixy += A * dx * dy
+        if Ixy == 0:
+            return 0
         return Ixy * (-1)
