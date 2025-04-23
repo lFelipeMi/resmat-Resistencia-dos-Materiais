@@ -30,7 +30,7 @@ class Figura():
 
     def momento_inercia(self, eixo='x', eixo_coordenada=0.0):
         if not isinstance(self.completa, Polygon):
-            momentos = [p.momento_inercia(eixo, eixo_coordenada) for p in self.completa.geoms]
+            momentos = [Figura(p).momento_inercia(eixo, eixo_coordenada) for p in self.completa.geoms]
             return sum(momentos)
 
         x, y = self.completa.exterior.coords.xy
@@ -52,6 +52,21 @@ class Figura():
     
     def momento_polar(self, eixo_coordenada=0.0):
         return self.momento_inercia('x', eixo_coordenada) + self.momento_inercia('y', eixo_coordenada)
+    
+    def produto_inercia(self, x0=0.0, y0=0.0):
+        if not isinstance(self.completa, Polygon):
+            produtos = [Figura(p).produto_inercia(x0, y0) for p in self.completa.geoms]
+            return sum(produtos)
 
-def contem_multi_figuras(*geometrias):
-    return any(isinstance(g, MultiPolygon) for g in geometrias)
+        x, y = self.completa.exterior.coords.xy
+        x = np.array(x) - x0
+        y = np.array(y) - y0
+        Ixy = 0
+        for i in range(len(x) - 1):
+            xi, yi = x[i], y[i]
+            xi1, yi1 = x[i+1], y[i+1]
+            det = xi * yi1 - xi1 * yi
+            Ixy += (xi * yi1 + 2 * xi * yi + 2 * xi1 * yi1 + xi1 * yi) * det
+
+        Ixy *= 1 / 24
+        return Ixy

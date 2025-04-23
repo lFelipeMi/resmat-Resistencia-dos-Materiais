@@ -342,33 +342,21 @@ class Application:
         self.figuraADD = Figura(self.retangulosADD)
         self.figuraREM = Figura(self.retangulosREM)
 
-        if isinstance(self.figuraADD.completa, MultiPolygon):
+        self.figura_final = Figura(self.figuraADD.completa.difference(self.figuraREM.completa)) 
+
+        if isinstance(self.figura_final, MultiPolygon):
             # Divide os polígonos em partes
-            self.figurasADD = [Figura([(0, 0, 0, 0)]) for _ in self.figuraADD.completa.geoms]
-            for f, geom in zip(self.figurasADD, self.figuraADD.completa.geoms):
-                f.completa = geom
+            self.figuras_finais = [Figura(geom) for geom in self.figura_final.completa.geoms]
 
-            self.figurasREM = [Figura([(0, 0, 0, 0)]) for _ in self.figuraREM.completa.geoms]
-            for f, geom in zip(self.figurasREM, self.figuraREM.completa.geoms):
-                f.completa = geom
+            self.momento_x = sum(f.momento_inercia('x', self.x_origem) for f in self.figuras_finais)
+            self.momento_y = sum(f.momento_inercia('y', self.y_origem) for f in self.figuras_finais)
 
-            # Cálculo de momentos
-            self.momento_xADD = sum(f.momento_inercia('x', self.x_origem) for f in self.figurasADD)
-            self.momento_xREM = sum(f.momento_inercia('x', self.x_origem) for f in self.figurasREM)
-            self.momento_x = self.momento_xADD - self.momento_xREM
-
-            self.momento_yADD = sum(f.momento_inercia('y', self.y_origem) for f in self.figurasADD)
-            self.momento_yREM = sum(f.momento_inercia('y', self.y_origem) for f in self.figurasREM)
-            self.momento_y = self.momento_yADD - self.momento_yREM
+            self.produto_xy = sum(f.produto_inercia(self.x_origem, self.y_origem) for f in self.figuras_finais)
         else:
+            self.momento_x = self.figura_final.momento_inercia('x', self.x_origem)
+            self.momento_y = self.figura_final.momento_inercia('y', self.y_origem)
 
-            self.intersecao = self.figuraADD.completa.intersection(self.figuraREM.completa)
-
-            self.intersecao_figura = Figura([])
-            self.intersecao_figura.completa = self.intersecao
-
-            self.momento_x = self.figuraADD.momento_inercia('x', self.x_origem) - self.intersecao_figura.momento_inercia('x', self.x_origem)
-            self.momento_y = self.figuraADD.momento_inercia('y', self.y_origem) - self.intersecao_figura.momento_inercia('y', self.y_origem)
+            self.produto_xy = self.figura_final.produto_inercia(self.x_origem, self.y_origem)
 
         self.momento_o = self.momento_x + self.momento_y 
 
@@ -376,7 +364,7 @@ class Application:
             f"Ix = {self.momento_x:.2f} {unidade}\n"
             f"Iy = {self.momento_y:.2f} {unidade}\n"
             f"Jo = {self.momento_o:.2f} {unidade}\n"
-            f"Produto de Inércia = Resultado {unidade}")
+            f"Produto de Inércia = {self.produto_xy} {unidade}")
 
 Application(root)
 root.mainloop()
