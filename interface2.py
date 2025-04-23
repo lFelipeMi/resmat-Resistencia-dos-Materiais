@@ -291,10 +291,24 @@ class Application:
         areas = []
         centroides_x = []
         centroides_y = []
-        numerador_x = 0
-        numerador_y = 0
+        addFiltrado = []
+        lados = [] 
 
         for base, altura, cx, cy in self.retangulosADD:
+            xmin, xmax = cx - base/2, cx + base/2
+            ymin, ymax = cy - altura/2, cy + altura/2
+
+            dentro = False
+            for xb_min, xb_max, yb_min, yb_max in lados:
+                if xmin >= xb_min and xmax <= xb_max and ymin >= yb_min and ymax <= yb_max:
+                    dentro = True
+                    break
+
+            if not dentro:
+                addFiltrado.append((base, altura, cx, cy))
+                lados.append((xmin, xmax, ymin, ymax))
+
+        for base, altura, cx, cy in addFiltrado:
             areas.append(base * altura)
             centroides_x.append(cx)
             centroides_y.append(cy)
@@ -306,25 +320,18 @@ class Application:
 
         area_total = sum(areas)
 
-        i = 0
-        while i < len(centroides_x):
-            numerador_x += (centroides_x[i] * areas[i])
-            numerador_y += (centroides_y[i] * areas[i])
-            i += 1
-
         if area_total == 0:
             return
 
-        centroide_x = (numerador_x/area_total)
-        centroide_y = (numerador_y/area_total)
+        numerador_x = sum(cx * a for cx, a in zip(centroides_x, areas))
+        numerador_y = sum(cy * a for cy, a in zip(centroides_y, areas))
+        centroide_x = numerador_x / area_total
+        centroide_y = numerador_y / area_total
 
         if self.centroide is not None:
             self.centroide.remove()
 
         self.centroide = self.ax.scatter(centroide_x, centroide_y, c='red')
-        areas.clear()
-        centroides_x.clear()
-        centroides_y.clear()
 
     # ---------------- Cálculos -----------------
     def Calcular(self):
