@@ -8,7 +8,7 @@ import numpy as np
 from shapely.geometry import Polygon
 from shapely.geometry import MultiPolygon
 
-from bknd import criar_retangulo, Figura #, analisar, analisar_forma
+from bknd import Figura, contem_multi_figuras #, analisar, analisar_forma
 
 root = Tk()
 
@@ -294,8 +294,9 @@ class Application:
 
         self.figuraADD = Figura(self.retangulosADD)
         self.figuraREM = Figura(self.retangulosREM)
+        self.intersecao = self.figuraADD.completa.intersection(self.figuraREM.completa) 
 
-        if isinstance(self.figuraADD.completa, MultiPolygon):
+        if contem_multi_figuras(self.figuraADD.completa, self.figuraREM.completa, self.intersecao):
             # Divide os polígonos em partes
             self.figurasADD = [Figura([(0, 0, 0, 0)]) for _ in self.figuraADD.completa.geoms]
             for f, geom in zip(self.figurasADD, self.figuraADD.completa.geoms):
@@ -305,7 +306,12 @@ class Application:
             for f, geom in zip(self.figurasREM, self.figuraREM.completa.geoms):
                 f.completa = geom
 
-            # Cálculo de momentos
+            self.intersecao_figuras = []
+            for geom in self.intersecao.geoms:
+                fig = Figura([(0, 0, 0, 0)])  # Inicializa com dummy
+                fig.completa = geom          # Substitui pela geometria real
+                self.intersecao_figuras.append(fig)
+
             self.momento_xADD = sum(f.momento_inercia('x', self.x_origem) for f in self.figurasADD)
             self.momento_xREM = sum(f.momento_inercia('x', self.x_origem) for f in self.figurasREM)
             self.momento_x = self.momento_xADD - self.momento_xREM
@@ -314,7 +320,6 @@ class Application:
             self.momento_yREM = sum(f.momento_inercia('y', self.y_origem) for f in self.figurasREM)
             self.momento_y = self.momento_yADD - self.momento_yREM
         else:
-
             self.intersecao = self.figuraADD.completa.intersection(self.figuraREM.completa)
 
             self.intersecao_figura = Figura([])

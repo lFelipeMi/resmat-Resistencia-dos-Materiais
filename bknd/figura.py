@@ -1,95 +1,57 @@
-'''
-No youtube tinha um jeito bem mais facil aaaaaaaaaaa
+from shapely.geometry import box
+from shapely.ops import unary_union
+from shapely.geometry import Polygon
+from shapely.geometry.base import BaseGeometry
+from shapely.geometry import MultiPolygon
+import numpy as np
 
-from .forma_geometrica import FormaGeometrica
-from .retangulo import Retangulo 
+from .geometria import Geometria
+from .retangulo import Retangulo
 
 class Figura():
-    def __init__(self, lista_formas=[]):
-        self.formas = lista_formas
+    def __init__(self, retangulos):        
+        self.completa = retangulos
+
+    @property
+    def completa(self):
+        return self.__completa
     
-    def calcular_area_total(self):
-        area = 0
-        for forma in self.formas:
-            area += forma.area
-        return area
+    @completa.setter
+    def completa(self, retangulos):
+        if isinstance(retangulos, BaseGeometry):
+            self.__completa = retangulos
+        else:
+            formas_da_figura = [Retangulo(b, h, cx, cy).box for (b, h, cx, cy) in retangulos]
+            self.__completa = unary_union(formas_da_figura)
 
-    def adicionar_forma(self, forma):
-        self.formas.append(forma)
+    @property
+    def area(self):
+        return self.completa.area if self.completa else 0
 
-    def momento_total(self):
-        Itotal = 0
-        for forma in self.formas:
-            Itotal += forma.momento(forma)
-        
-        return Itotal
+    def momento_inercia(self, eixo='x', eixo_coordenada=0.0):
+        if not isinstance(self.completa, Polygon):
+            momentos = [p.momento_inercia(eixo, eixo_coordenada) for p in self.completa.geoms]
+            return sum(momentos)
+
+        x, y = self.completa.exterior.coords.xy
+        x = np.array(x)
+        y = np.array(y)
+        I = 0
+        for i in range(len(x) - 1):
+            xi, yi = x[i], y[i]
+            xi1, yi1 = x[i+1], y[i+1]
+            det = xi * yi1 - xi1 * yi 
+            if eixo == 'x':
+                I += (yi**2 + yi*yi1 + yi1**2) * det
+            elif eixo == 'y':
+                I += (xi**2 + xi*xi1 + xi1**2) * det
+        I *= 1/12
+        I = abs(I)
+
+        return I
     
-    def momento_em(self, eixo):
-        Ieixo = 0
-        for forma in self.formas:
-            Ieixo += forma.momento_em(eixo)
-        return Ieixo                                 
+    def momento_polar(self, eixo_coordenada=0.0):
+        return self.momento_inercia('x', eixo_coordenada) + self.momento_inercia('y', eixo_coordenada)
 
-    def verificar_sobreposicoes(self):
-        i = 0
-        tam = len(self.formas)
-        while(i < tam - 1):
-
-            j = i + 1
-            while(j < tam):
-                self.verificar_sobreposicao(self.formas[i], self.formas[j])
-                j += 1
-        
-            i += 1
-    
-    def verificar_sobreposicao(self, retangulo1, retangulo2):
-        tava funcionando mas só pra ser utilizada uma vez.
-        cx1max, cx1min = retangulo1.cx + retangulo1.base/2, retangulo1.cx - retangulo1.base/2
-        cy1max, cy1min = retangulo1.cy + retangulo1.altura/2, retangulo1.cy - retangulo1.altura/2
-        cx2max, cx2min = retangulo2.cx + retangulo2.base/2, retangulo2.cx - retangulo2.base/2
-        cy2max, cy2min = retangulo2.cy + retangulo2.altura/2, retangulo2.cy - retangulo2.altura/2
-
-        cyCorrecao, cxCorrecao = 0, 0
-
-        base_sobreposta = 0
-
-        if(cx1max <= cx2max and cx1min >= cx2min):
-            base_sobreposta = retangulo1.base
-            cxCorrecao = retangulo1.cx
-
-        if(cx1max >= cx2max and cx1min <= cx2min):
-            base_sobreposta = retangulo2.base
-            cxCorrecao = retangulo2.cx
-
-        if(cx1max > cx2max and cx1min >= cx2min):
-            base_sobreposta = cx2max - cx1min
-            cxCorrecao = cx1min + base_sobreposta / 2
-
-        if(cx1max < cx2max and cx1min <= cx2min):
-            base_sobreposta = cx1max - cx2min
-            cxCorrecao = cx2min + base_sobreposta / 2
-        
-        altura_sobreposta = 0
-
-        if(cy1max <= cy2max and cy1min >= cy2min):
-            altura_sobreposta = retangulo1.altura
-            cyCorrecao = retangulo1.cy
-
-        if(cy1max >= cy2max and cy1min <= cy2min):
-            altura_sobreposta = retangulo2.altura
-            cyCorrecao = retangulo2.cy
-
-        if(cy1max > cy2max and cy1min >= cy2min):
-            altura_sobreposta = cy2max - cy1min
-            cyCorrecao = cy1min + altura_sobreposta / 2
-
-        if(cy1max < cy2max and cy1min <= cy2min):
-            altura_sobreposta = cy1max - cy2min
-            cyCorrecao = cy2min + altura_sobreposta / 2
-        
-
-        print(f'Base sopreposta: {base_sobreposta}\nAltura sobreposta: {altura_sobreposta}')
-        if(base_sobreposta * altura_sobreposta != 0):
-            print('Houve uma sobreposição')
-            self.adicionar_forma(Retangulo(base_sobreposta, altura_sobreposta * -1, cxCorrecao, cyCorrecao))
-    '''
+def contem_multi_figuras(*geometrias):
+    return any(isinstance(g, MultiPolygon) for g in geometrias)
