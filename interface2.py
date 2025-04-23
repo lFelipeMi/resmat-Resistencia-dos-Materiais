@@ -364,7 +364,7 @@ class Application:
             f"Ix = {self.momento_x:.2f} {unidade}\n"
             f"Iy = {self.momento_y:.2f} {unidade}\n"
             f"Jo = {self.momento_o:.2f} {unidade}\n"
-            f"Produto de Inércia = {self.produto_xy} {unidade}")
+            f"Ixy = {self.produto_xy} {unidade}")
 
 Application(root)
 root.mainloop()
