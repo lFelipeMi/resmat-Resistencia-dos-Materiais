@@ -56,7 +56,7 @@ class Figura():
     def produto_inercia(self, eixo_coordenada_x = 0.0, eixo_coordenada_y = 0.0):
         if not isinstance(self.completa, Polygon):
             produtos = []
-            for produtos_in_lista in completa.geoms:
+            for p in self.completa.geoms:
                 resultado = Figura([[
                     (p.bounds[2] - p.bounds[0]),
                     (p.bounds[3] - p.bounds[1]),
