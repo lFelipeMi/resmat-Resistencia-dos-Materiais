@@ -53,20 +53,39 @@ class Figura():
     def momento_polar(self, eixo_coordenada=0.0):
         return self.momento_inercia('x', eixo_coordenada) + self.momento_inercia('y', eixo_coordenada)
     
-    def produto_inercia(self, x0=0.0, y0=0.0):
+    def produto_inercia(self, eixo_coordenada_x = 0.0, eixo_coordenada_y = 0.0):
         if not isinstance(self.completa, Polygon):
-            produtos = [Figura(p).produto_inercia(x0, y0) for p in self.completa.geoms]
+            produtos = []
+            for produtos_in_lista in completa.geoms:
+                resultado = Figura([[
+                    (p.bounds[2] - p.bounds[0]),
+                    (p.bounds[3] - p.bounds[1]),
+                    p.centroid.x,
+                    p.centroid.y]]).produto_inercia(eixo_coordenada_x, eixo_coordenada_y)
+                produtos.append(resultado)
+                    
             return sum(produtos)
-
+        
         x, y = self.completa.exterior.coords.xy
-        x = np.array(x) - x0
-        y = np.array(y) - y0
+        x = np.array(x)
+        y = np.array(y)
+
+        
         Ixy = 0
         for i in range(len(x) - 1):
             xi, yi = x[i], y[i]
             xi1, yi1 = x[i+1], y[i+1]
             det = xi * yi1 - xi1 * yi
-            Ixy += (xi * yi1 + 2 * xi * yi + 2 * xi1 * yi1 + xi1 * yi) * det
+            termo = (xi * yi1 + 2 * xi * yi + 2 * xi1 * yi1 + xi1 * yi) 
+            Ixy +=  termo * det
 
         Ixy *= 1 / 24
-        return Ixy
+
+        c = self.completa.centroid
+        A = self.completa.area
+
+        dx = eixo_coordenada_x - c.x
+        dy = eixo_coordenada_y - c.y
+
+        Ixy += A * dx * dy
+        return Ixy * (-1)
