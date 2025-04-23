@@ -72,7 +72,7 @@ class Application:
 
     # ---------------- Limpar plano ----------------  
         self.limparPlano = Button(self.subpainel, text="Limpar plano", font=("Arial", "12"), fg=("red"), command=self.LimparPlano)
-        self.limparPlano.grid(row=7, column=0, pady=10)
+        self.limparPlano.grid(row=7, column=0,padx=15, pady=10, sticky=W)
 
     # ---------------- Subáreas ----------------
         self.subareaMsg = Label(self.subpainel, text="Adicione ou remova uma subárea da área final:", font=("Arial", 12), bg="#cccccc", fg="black")
@@ -99,10 +99,10 @@ class Application:
         self.CY.grid(row=6, column=1, padx=5, pady=10)
 
         self.add = Button(self.subpainel, text="Adicionar", font=("Arial", "12"), width=10, command=self.Adicionar)
-        self.add.grid(row=7, column=1, pady=10, sticky=W)
+        self.add.grid(row=7, column=1,padx=15, pady=10, sticky=W)
 
         self.remover = Button(self.subpainel, text="Remover", font=("Arial", "12"), width=10, command=self.Remover)
-        self.remover.grid(row=7, column=2, pady=10, sticky=W)
+        self.remover.grid(row=7, column=2,padx=15, pady=10, sticky=W)
 
     # ---------------- SubPainel2 ----------------
         self.subpainel2 = Frame(self.painelControles, bg="#cccccc")
