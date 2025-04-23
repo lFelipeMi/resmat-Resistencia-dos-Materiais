@@ -8,7 +8,7 @@ import numpy as np
 from shapely.geometry import Polygon
 from shapely.geometry import MultiPolygon
 
-from bknd import Figura, contem_multi_figuras #, analisar, analisar_forma
+from bknd import criar_retangulo, Figura
 
 root = Tk()
 
@@ -18,6 +18,7 @@ class Application:
         root.attributes('-fullscreen', True)
         root.configure(background='#1e3743')
 
+        self.centroide = None
         self.retangulosADD = []
         self.retangulosREM = []
 
@@ -48,15 +49,15 @@ class Application:
         self.origemMsg.grid(row=0, column=0, columnspan=3, pady=(5, 10))
 
     # ---------------- Entradas Coordenadas ----------------
-        self.CXLabel = Label(self.origemFrame, text="X:", font=("Arial", "12"), bg="#cccccc", fg="black")
-        self.CXLabel.grid(row=1, column=0)
-        self.CX = Entry(self.origemFrame, width=10, font=("Arial", "12"))
-        self.CX.grid(row=1, column=1, padx=3, pady=5)
+        self.origemXLabel = Label(self.origemFrame, text="X:", font=("Arial", "12"), bg="#cccccc", fg="black")
+        self.origemXLabel.grid(row=1, column=0)
+        self.origemX = Entry(self.origemFrame, width=10, font=("Arial", "12"))
+        self.origemX.grid(row=1, column=1, padx=3, pady=5)
 
-        self.CYLabel = Label(self.origemFrame, text="Y:", font=("Arial", "12"), bg="#cccccc", fg="black")
-        self.CYLabel.grid(row=2, column=0)
-        self.CY = Entry(self.origemFrame, width=10, font=("Arial", "12"))
-        self.CY.grid(row=2, column=1, padx=3, pady=5)
+        self.origemYLabel = Label(self.origemFrame, text="Y:", font=("Arial", "12"), bg="#cccccc", fg="black")
+        self.origemYLabel.grid(row=2, column=0)
+        self.origemY = Entry(self.origemFrame, width=10, font=("Arial", "12"))
+        self.origemY.grid(row=2, column=1, padx=3, pady=5)
 
         self.definirBtn = Button(self.origemFrame, text="Definir Origem", font=("Arial", "12"), command=self.DefinirOrigem)
         self.definirBtn.grid(row=3, column=1, padx=3, pady=5)
@@ -87,15 +88,15 @@ class Application:
         self.altura = Entry(self.subpainel, width=10, font=("Arial", "12"))
         self.altura.grid(row=4, column=1, padx=5, pady=10)
 
-        self.XLabel = Label(self.subpainel, text="X do Centróide:", font=("Arial", "12"), bg="#cccccc", fg="black")
-        self.XLabel.grid(row=5, column=0)
-        self.X = Entry(self.subpainel, width=10, font=("Arial", "12"))
-        self.X.grid(row=5, column=1, padx=5, pady=10)
+        self.CXLabel = Label(self.subpainel, text="X do Centróide:", font=("Arial", "12"), bg="#cccccc", fg="black")
+        self.CXLabel.grid(row=5, column=0)
+        self.CX = Entry(self.subpainel, width=10, font=("Arial", "12"))
+        self.CX.grid(row=5, column=1, padx=5, pady=10)
 
-        self.YLabel = Label(self.subpainel, text="Y do Centróide:", font=("Arial", "12"), bg="#cccccc", fg="black")
-        self.YLabel.grid(row=6, column=0)
-        self.Y = Entry(self.subpainel, width=10, font=("Arial", "12"))
-        self.Y.grid(row=6, column=1, padx=5, pady=10)
+        self.CYLabel = Label(self.subpainel, text="Y do Centróide:", font=("Arial", "12"), bg="#cccccc", fg="black")
+        self.CYLabel.grid(row=6, column=0)
+        self.CY = Entry(self.subpainel, width=10, font=("Arial", "12"))
+        self.CY.grid(row=6, column=1, padx=5, pady=10)
 
         self.add = Button(self.subpainel, text="Adicionar", font=("Arial", "12"), width=10, command=self.Adicionar)
         self.add.grid(row=7, column=1, pady=10, sticky=W)
@@ -123,8 +124,8 @@ class Application:
     # ----------------  Criando o Plano ----------------
     def DefinirOrigem(self):
         try:
-            self.x_origem = float(self.CX.get())
-            self.y_origem = float(self.CY.get())
+            self.x_origem = float(self.origemX.get())
+            self.y_origem = float(self.origemY.get())
         except ValueError:
             messagebox.showerror("Erro", "Por favor, preencha todos os campos corretamente.")
             return
@@ -160,8 +161,8 @@ class Application:
         try:
             base = float(self.base.get())
             altura = float(self.altura.get())
-            cx = float(self.X.get())
-            cy = float(self.Y.get())
+            cx = float(self.CX.get())
+            cy = float(self.CY.get())
         except ValueError:
             messagebox.showerror("Erro", "Por favor, preencha todos os campos corretamente.")
             return
@@ -174,20 +175,21 @@ class Application:
             self.retangulosADD.append((base, altura, cx, cy))
             self.ax.add_patch(retangulo)
             self.AjustarPlano()
+            self.ExibirCentroide()
             self.canvas.draw()
         
-        self.X.delete(0, END)
-        self.Y.delete(0, END)
+        self.CX.delete(0, END)
+        self.CY.delete(0, END)
         self.base.delete(0, END)
-        self.altura.delete(0, END) #isso limpa a entry após apertar o botão
+        self.altura.delete(0, END)              #isso limpa a entry após apertar o botão
 
     # ---------------- Removendo subáreas ----------------
     def Remover(self):
         try:
             base = float(self.base.get())
             altura = float(self.altura.get())
-            cx = float(self.X.get())
-            cy = float(self.Y.get())
+            cx = float(self.CX.get())
+            cy = float(self.CY.get())
         except ValueError:
             messagebox.showerror("Erro", "Por favor, preencha todos os campos corretamente.")
             return
@@ -220,24 +222,26 @@ class Application:
                 self.ax.add_patch(remocao)
                 self.retangulosREM.append((largura_inter, altura_inter, inter_x1 + largura_inter/2, inter_y1 + altura_inter/2))
 
-        self.X.delete(0, END)
-        self.Y.delete(0, END)
+        self.CX.delete(0, END)
+        self.CY.delete(0, END)
         self.base.delete(0, END)
         self.altura.delete(0, END)
 
         if not interseccao:
             return
         else:
+            self.ExibirCentroide()
             self.canvas.draw()
-    
+
+    # ---------------- Removendo tudo ----------------
     def LimparPlano(self):
         if self.ax:
 
             self.ax.clear()
 
             try:
-                x_origem = float(self.CX.get())
-                y_origem = float(self.CY.get())
+                x_origem = float(self.origemX.get())
+                y_origem = float(self.origemY.get())
             except ValueError:
                 messagebox.showerror("Erro", "Por favor, defina a origem corretamente antes de limpar.")
                 return
@@ -261,6 +265,7 @@ class Application:
         self.retangulosREM.clear()
         self.resultado["text"] = ""
 
+    # ---------------- Plano dinâmico ----------------
     def AjustarPlano(self):
 
         maior = 0
@@ -280,6 +285,48 @@ class Application:
         self.ax.set_xticks(np.arange(self.x_origem - maior, self.x_origem + (maior+1), ticks))
         self.ax.set_yticks(np.arange(self.y_origem - maior, self.y_origem + (maior+1), ticks))
 
+    # ---------------- Exibição centróide ----------------
+    def ExibirCentroide(self):
+
+        areas = []
+        centroides_x = []
+        centroides_y = []
+        numerador_x = 0
+        numerador_y = 0
+
+        for base, altura, cx, cy in self.retangulosADD:
+            areas.append(base * altura)
+            centroides_x.append(cx)
+            centroides_y.append(cy)
+
+        for base, altura, cx, cy in self.retangulosREM:
+            areas.append(-base * altura)
+            centroides_x.append(cx)
+            centroides_y.append(cy)
+
+        area_total = sum(areas)
+
+        i = 0
+        while i < len(centroides_x):
+            numerador_x += (centroides_x[i] * areas[i])
+            numerador_y += (centroides_y[i] * areas[i])
+            i += 1
+
+        if area_total == 0:
+            return
+
+        centroide_x = (numerador_x/area_total)
+        centroide_y = (numerador_y/area_total)
+
+        if self.centroide is not None:
+            self.centroide.remove()
+
+        self.centroide = self.ax.scatter(centroide_x, centroide_y, c='red')
+        areas.clear()
+        centroides_x.clear()
+        centroides_y.clear()
+
+    # ---------------- Cálculos -----------------
     def Calcular(self):
 
         unidade = self.opcao.get()
@@ -294,9 +341,8 @@ class Application:
 
         self.figuraADD = Figura(self.retangulosADD)
         self.figuraREM = Figura(self.retangulosREM)
-        self.intersecao = self.figuraADD.completa.intersection(self.figuraREM.completa) 
 
-        if contem_multi_figuras(self.figuraADD.completa, self.figuraREM.completa, self.intersecao):
+        if isinstance(self.figuraADD.completa, MultiPolygon):
             # Divide os polígonos em partes
             self.figurasADD = [Figura([(0, 0, 0, 0)]) for _ in self.figuraADD.completa.geoms]
             for f, geom in zip(self.figurasADD, self.figuraADD.completa.geoms):
@@ -306,12 +352,7 @@ class Application:
             for f, geom in zip(self.figurasREM, self.figuraREM.completa.geoms):
                 f.completa = geom
 
-            self.intersecao_figuras = []
-            for geom in self.intersecao.geoms:
-                fig = Figura([(0, 0, 0, 0)])  # Inicializa com dummy
-                fig.completa = geom          # Substitui pela geometria real
-                self.intersecao_figuras.append(fig)
-
+            # Cálculo de momentos
             self.momento_xADD = sum(f.momento_inercia('x', self.x_origem) for f in self.figurasADD)
             self.momento_xREM = sum(f.momento_inercia('x', self.x_origem) for f in self.figurasREM)
             self.momento_x = self.momento_xADD - self.momento_xREM
@@ -320,6 +361,7 @@ class Application:
             self.momento_yREM = sum(f.momento_inercia('y', self.y_origem) for f in self.figurasREM)
             self.momento_y = self.momento_yADD - self.momento_yREM
         else:
+
             self.intersecao = self.figuraADD.completa.intersection(self.figuraREM.completa)
 
             self.intersecao_figura = Figura([])
