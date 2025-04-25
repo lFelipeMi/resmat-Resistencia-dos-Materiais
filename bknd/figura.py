@@ -90,4 +90,5 @@ class Figura():
         Ixy += A * dx * dy
         if Ixy == 0:
             return 0
-        return Ixy * (-1)
+        else:
+            return Ixy * (-1)
