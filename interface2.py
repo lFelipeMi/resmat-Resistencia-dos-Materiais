@@ -167,6 +167,10 @@ class Application:
             messagebox.showerror("Erro", "Por favor, preencha todos os campos corretamente.")
             return
 
+        if base <= 0 or altura <= 0:
+            messagebox.showerror("Erro", "A área do retângulo deve ser positiva.")
+            return
+
         canto_x = cx - base / 2
         canto_y = cy - altura / 2
 
@@ -194,6 +198,10 @@ class Application:
             messagebox.showerror("Erro", "Por favor, preencha todos os campos corretamente.")
             return
 
+        if base <= 0 or altura <= 0:
+            messagebox.showerror("Erro", "A área do retângulo deve ser positiva.")
+            return
+        
         canto_x1 = cx - base / 2
         canto_y1 = cy - altura / 2
         canto_x2 = cx + base / 2
