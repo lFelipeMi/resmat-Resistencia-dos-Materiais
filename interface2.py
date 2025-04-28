@@ -278,6 +278,7 @@ class Application:
                 i+=1
             
         ticks = abs(maior*0.2)
+        maior = abs(maior)
 
         self.ax.set_xlim(self.x_origem - maior, self.x_origem + maior)
         self.ax.set_ylim(self.y_origem - maior, self.y_origem + maior)
