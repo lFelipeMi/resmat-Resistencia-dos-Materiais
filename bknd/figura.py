@@ -36,6 +36,12 @@ class Figura():
         x, y = self.completa.exterior.coords.xy
         x = np.array(x)
         y = np.array(y)
+
+        if eixo == 'x':
+            y = y - eixo_coordenada
+        elif eixo == 'y':
+            x = x - eixo_coordenada
+
         I = 0
         for i in range(len(x) - 1):
             xi, yi = x[i], y[i]
