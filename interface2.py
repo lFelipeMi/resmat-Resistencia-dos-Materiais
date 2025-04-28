@@ -397,10 +397,10 @@ class Application:
         self.momento_o = self.momento_x + self.momento_y 
 
         self.resultado["text"] = (
-            f"Ix = {self.momento_x:.2f} {unidade}\n"
-            f"Iy = {self.momento_y:.2f} {unidade}\n"
-            f"Jo = {self.momento_o:.2f} {unidade}\n"
-            f"Ixy = {self.produto_inercia:.2f} {unidade}")
+            f"Ix = {self.momento_x:,.2f} {unidade}\n"
+            f"Iy = {self.momento_y:,.2f} {unidade}\n"
+            f"Jo = {self.momento_o:,.2f} {unidade}\n"
+            f"Ixy = {self.produto_inercia:,.2f} {unidade}").replace(",", "X").replace(".", ",").replace("X", ".")
 
 Application(root)
 root.mainloop()
