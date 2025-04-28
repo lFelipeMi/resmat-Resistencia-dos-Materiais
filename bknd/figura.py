@@ -79,15 +79,14 @@ class Figura():
             termo = (xi * yi1 + 2 * xi * yi + 2 * xi1 * yi1 + xi1 * yi) 
             Ixy +=  termo * det
 
-        Ixy *= 1 / 24
+        Ixy = (Ixy * 1/24) * (-1)
 
         c = self.completa.centroid
         A = self.completa.area
-
-        dx = eixo_coordenada_x - c.x
-        dy = eixo_coordenada_y - c.y
-
-        Ixy += A * dx * dy
-        Ixy == 0 if Ixy == 0 else Ixy * (-1)
+        if eixo_coordenada_x != 0 or eixo_coordenada_y !=0:
+            dx = eixo_coordenada_x - c.x
+            dy = eixo_coordenada_y - c.y
+            Ixy = 0
+            Ixy += A * dx * dy
         
         return Ixy
