@@ -61,21 +61,15 @@ class Figura():
     
     def produto_inercia(self, eixo_coordenada_x = 0.0, eixo_coordenada_y = 0.0):
         if not isinstance(self.completa, Polygon):
-            produtos = []
-            for p in self.completa.geoms:
-                resultado = Figura([[
-                    (p.bounds[2] - p.bounds[0]),
-                    (p.bounds[3] - p.bounds[1]),
-                    p.centroid.x,
-                    p.centroid.y]]).produto_inercia(eixo_coordenada_x, eixo_coordenada_y)
-                produtos.append(resultado)
-                    
+            produtos = [Figura(p).produto_inercia(eixo_coordenada_x, eixo_coordenada_y) for p in self.completa.geoms]
             return sum(produtos)
-        
+            
         x, y = self.completa.exterior.coords.xy
         x = np.array(x)
         y = np.array(y)
 
+        x = x - eixo_coordenada_x
+        y = y - eixo_coordenada_y
         
         Ixy = 0
         for i in range(len(x) - 1):
@@ -92,7 +86,6 @@ class Figura():
         if eixo_coordenada_x != 0 or eixo_coordenada_y !=0:
             dx = eixo_coordenada_x - c.x
             dy = eixo_coordenada_y - c.y
-            Ixy = 0
             Ixy += A * dx * dy
         
         return Ixy
