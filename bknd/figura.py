@@ -72,9 +72,19 @@ class Figura():
                     
             return sum(produtos)
         
-        x, y = self.completa.exterior.coords.xy
-        x = np.array(x)
-        y = np.array(y)
+        coords = list(self.completa.exterior.coords)
+        soma_orient = 0
+        for i in range(len(coords) - 1):
+            soma_orient += (coords[i+1][0] - coords[i][0]) * (coords[i+1][1] + coords[i][1])
+        if soma_orient > 0:  # sentido horário - inverter pq ele me retorna coordenadas de analise em sentido anti-horário, o que favoreceu em erro de sinal 
+            coords = coords[::-1]
+
+        x = np.array([c[0] for c in coords])
+        y = np.array([c[1] for c in coords])
+
+        #x, y = self.completa.exterior.coords.xy
+        #x = np.array(x)
+        #y = np.array(y)
 
         Ixy = 0
         for i in range(len(x) - 1):
@@ -83,8 +93,9 @@ class Figura():
             det = xi * yi1 - xi1 * yi
             termo = (xi * yi1 + 2 * xi * yi + 2 * xi1 * yi1 + xi1 * yi) 
             Ixy +=  termo * det
+        Ixy = Ixy * 1/24
+        #Ixy = abs(Ixy * 1/24) #* (-1) Outro fator que foi influenciável
 
-        Ixy = (Ixy * 1/24) * (-1)
 
         c = self.completa.centroid
         A = self.completa.area
