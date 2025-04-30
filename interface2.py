@@ -390,11 +390,9 @@ class Application:
             self.momento_x = self.figuraADD.momento_inercia('x', self.x_origem) - self.intersecao_figura.momento_inercia('x', self.x_origem)
             self.momento_y = self.figuraADD.momento_inercia('y', self.y_origem) - self.intersecao_figura.momento_inercia('y', self.y_origem)
 
-            self.produto_inercia = (
-            self.figuraADD.produto_inercia(self.x_origem, self.y_origem) -
-            self.intersecao_figura.produto_inercia(self.x_origem, self.y_origem))
+            self.produto_inercia = self.figuraADD.produto_inercia(self.x_origem, self.y_origem) - self.intersecao_figura.produto_inercia(self.x_origem, self.y_origem)
 
-        self.momento_o = self.momento_x + self.momento_y 
+        self.momento_o = self.momento_x + self.momento_y
 
         self.resultado["text"] = (
             f"Ix = {self.momento_x:,.2f} {unidade}\n"
