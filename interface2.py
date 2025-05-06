@@ -358,7 +358,7 @@ class Application:
         self.figuraADD = Figura(self.retangulosADD)
         self.figuraREM = Figura(self.retangulosREM)
 
-        if isinstance(self.figuraADD.completa, MultiPolygon):
+        if (isinstance(self.figuraADD.completa, MultiPolygon) and isinstance(self.figuraREM.completa, MultiPolygon)):
             # Divide os polígonos em partes
             self.figurasADD = [Figura([(0, 0, 0, 0)]) for _ in self.figuraADD.completa.geoms]
             for f, geom in zip(self.figurasADD, self.figuraADD.completa.geoms):
