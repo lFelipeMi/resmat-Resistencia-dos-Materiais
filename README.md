@@ -1,10 +1,10 @@
 Autores:
 Leonardo Araujo Armelin, RA: 49577
-Cleiton, RA:
-Stefany, RA:
+Cleiton da Silva Guilhermite, RA: 049565
+Stefany Figueiredo, RA: 049585
 Luiz Felipe Miranda, RA: 49581
 
-Línguagem:
+Linguagem:
 Python 3.12.3
 
 Bibliotecas:
