@@ -59,9 +59,16 @@ class Figura():
     def momento_polar(self, eixo_coordenada=0.0):
         return self.momento_inercia('x', eixo_coordenada) + self.momento_inercia('y', eixo_coordenada)
     
+        # FUNÇÃO CÁLCULO PRODUTO DE INÉRCIA
+
     def produto_inercia(self, eixo_coordenada_x = 0.0, eixo_coordenada_y = 0.0):
+
+        #VERIFICAÇÃO DE INSTÂNCIA - MULTIPOLYGON 
+
         if not isinstance(self.completa, Polygon):
+
             produtos = []
+
             for p in self.completa.geoms:
                 resultado = Figura([[
                     (p.bounds[2] - p.bounds[0]),
@@ -72,20 +79,21 @@ class Figura():
                     
             return sum(produtos)
         
+        # PADRONIZANDO ORIENTAÇÃO DE COORDENADAS
+
         coords = list(self.completa.exterior.coords)
+        
         soma_orient = 0
         for i in range(len(coords) - 1):
             soma_orient += (coords[i+1][0] - coords[i][0]) * (coords[i+1][1] + coords[i][1])
-        if soma_orient > 0:  # sentido horário - inverter pq ele me retorna coordenadas de analise em sentido anti-horário, o que favoreceu em erro de sinal 
+
+        if soma_orient > 0:
             coords = coords[::-1]
 
         x = np.array([c[0] for c in coords])
         y = np.array([c[1] for c in coords])
 
-        #x, y = self.completa.exterior.coords.xy
-        #x = np.array(x)
-        #y = np.array(y)
-
+        # CÁLCULO PRODUTO DE INÉRCIA
         Ixy = 0
         for i in range(len(x) - 1):
             xi, yi = x[i], y[i]
@@ -94,15 +102,16 @@ class Figura():
             termo = (xi * yi1 + 2 * xi * yi + 2 * xi1 * yi1 + xi1 * yi) 
             Ixy +=  termo * det
         Ixy = Ixy * 1/24
-        #Ixy = abs(Ixy * 1/24) #* (-1) Outro fator que foi influenciável
 
-
+        # CÁLCULO PRODUTO INÉRCIA POR EIXOS PARALELOS (eixo de coordenada paralelo ao centróide)
         c = self.completa.centroid
         A = self.completa.area
+
         if eixo_coordenada_x != 0 or eixo_coordenada_y !=0:
-            dx = eixo_coordenada_x - c.x
-            dy = eixo_coordenada_y - c.y
+            dy = c.x - eixo_coordenada_x
+            dx = c.y - eixo_coordenada_y
             Ixy = 0
             Ixy += A * dx * dy
         
         return Ixy
+    
