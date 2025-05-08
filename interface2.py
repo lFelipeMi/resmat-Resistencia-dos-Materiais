@@ -338,7 +338,10 @@ class Application:
         centroide_y = numerador_y / area_total
 
         if self.centroide is not None:
-            self.centroide.remove()
+            try:
+                self.centroide.remove()
+            except NotImplementedError:
+                self.centroide.set_visible(False)
 
         self.centroide = self.ax.scatter(centroide_x, centroide_y, c='red')
 
